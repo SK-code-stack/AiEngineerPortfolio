@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Default: Dark Theme */
+  --bg: #0A0A0B;
+  --surface: #131315;
+  --surface-2: #1B1B1E;
+  --text: #F5F5F7;
+  --text-dim: #93939C;
+  --border: rgba(245, 245, 247, 0.10);
+  --border-strong: rgba(245, 245, 247, 0.18);
+  --accent: #2EE6D6;
+  --accent-soft: rgba(46, 230, 214, 0.12);
+  --glow: rgba(46, 230, 214, 0.25);
+  --corner-glow-opacity: 0.9;
+  --corner-glow-height: 230px;
+}
+
+[data-theme="light"] {
+  --bg: #FAFAF9;
+  --surface: #FFFFFF;
+  --surface-2: #F1F1F0;
+  --text: #0A0A0B;
+  --text-dim: #65656C;
+  --border: rgba(10, 10, 11, 0.09);
+  --border-strong: rgba(10, 10, 11, 0.16);
+  --accent: #00A99A;
+  --accent-soft: rgba(0, 169, 154, 0.10);
+  --glow: rgba(0, 169, 154, 0.18);
+  --corner-glow-opacity: 0.55;
+  --corner-glow-height: 230px;
+}
+
+@media (max-width: 768px) {
+
+  :root,
+  [data-theme="light"] {
+    --corner-glow-height: 140px;
+  }
+}
+
+/* Hide default browser scrollbar */
+html {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+body {
+  color: var(--text);
+  background-color: var(--bg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Scroll Progress Bar on the right edge */
+#scroll-progress {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 4px;
+  height: 100vh;
+  background: var(--border);
+  z-index: 100;
+  pointer-events: none;
+}
+
+#scroll-progress-fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent) 0%, #7A2FD8 28%, #FF8800 62%, #FF1D00 82%, #FF1D00 100%);
+  background-size: 100% 100vh;
+  background-repeat: no-repeat;
+  height: 0%;
+  box-shadow: 0 0 12px var(--glow);
+  transition: height 0.1s ease-out;
+}
+
+/* Corner Gradient Accent signature detail */
+.corner-gradient-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: var(--corner-glow-height);
+  /* background: linear-gradient(180deg, var(--accent) 0%, #7A2FD8 28%, #FF8800 62%, #FF1D00 82%, transparent 100%); */
+  opacity: var(--corner-glow-opacity);
+  z-index: 99;
+  pointer-events: none;
+  transition: opacity 0.3s ease, height 0.3s ease;
+}
+
+/* Button Shine sweep on hover */
+@keyframes shine-sweep {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 200%;
+  }
+}
+
+.btn-shine-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.25),
+      transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+
+.btn-shine-container:hover::after {
+  animation: shine-sweep 1.2s ease-out;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Keyboard Focus States */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-delay: 0s !important;
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+    transform: none !important;
+  }
+}
+
+/* Custom Rotating Conic Avatar Border matching reference */
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 20px;
+  position: relative;
+  flex-shrink: 0;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 23px;
+  padding: 3px;
+  background: conic-gradient(from 0deg, var(--accent), transparent 40%, var(--accent) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-slow 6s linear infinite;
+  pointer-events: none;
+}
+
+/* Project Card Hover Border Effect matching reference design */
+.project-card-glow {
+  position: relative;
+}
+
+.project-card-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1.5px;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), var(--accent), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.project-card-glow:hover::before {
+  opacity: 0.75;
+}
+
+/* Continuous smooth marquee scrolling animation */
+@keyframes marquee-scroll-animation {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-infinite-scroll {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll-animation 55s linear infinite !important;
+}
