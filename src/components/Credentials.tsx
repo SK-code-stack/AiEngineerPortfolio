@@ -1,94 +1,67 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface Course {
   title: string;
   subtitle: string;
-  icon: React.ReactNode;
+  badge_icon: string;
 }
 
 export default function Credentials() {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [certs, setCerts] = useState<Course[]>([]);
 
-  const courses: Course[] = [
-    {
-      title: "Full Stack Web Development",
-      subtitle: "Certificate Course • Web Engineering & APIs",
-      icon: (
-        <svg
-          className="w-5 h-5 text-accent"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Python Programming",
-      subtitle: "Applied, Project-Based • Core & Automation",
-      icon: (
-        <svg
-          className="w-5 h-5 text-accent"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Graphic Designing",
-      subtitle: "Visual Systems, UI Layouts & Typography",
-      icon: (
-        <svg
-          className="w-5 h-5 text-accent"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.414-1.414a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-          />
-        </svg>
-      ),
-    },
-    {
-      title: "Machine Learning Fundamentals",
-      subtitle: "scikit-learn, Regression & Applied Stats",
-      icon: (
-        <svg
-          className="w-5 h-5 text-accent"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-          />
-        </svg>
-      ),
-    },
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api/v1'}/certifications/`)
+      .then(r => r.json())
+      .then(data => setCerts(data))
+      .catch(err => console.error("Error loading certifications:", err));
+  }, []);
+
+  const getCertIcon = (badgeIcon: string) => {
+    switch (badgeIcon) {
+      case "code":
+        return (
+          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+        );
+      case "python":
+        return (
+          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        );
+      case "design":
+        return (
+          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.414-1.414a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+          </svg>
+        );
+      case "ml":
+        return (
+          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        );
+      default:
+        return (
+          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        );
+    }
+  };
+
+  const defaultCourses = [
+    { title: "Full Stack Web Development", subtitle: "Certificate Course • Web Engineering & APIs", badge_icon: "code" },
+    { title: "Python Programming", subtitle: "Applied, Project-Based • Core & Automation", badge_icon: "python" },
+    { title: "Graphic Designing", subtitle: "Visual Systems, UI Layouts & Typography", badge_icon: "design" },
+    { title: "Machine Learning Fundamentals", subtitle: "scikit-learn, Regression & Applied Stats", badge_icon: "ml" }
   ];
+
+  const coursesToRender = certs.length ? certs : defaultCourses;
 
   const scroll = (direction: "left" | "right") => {
     const carousel = carouselRef.current;
@@ -101,6 +74,7 @@ export default function Credentials() {
       carousel.scrollLeft += scrollAmount;
     }
   };
+
 
   return (
     <section id="credentials" className="py-24 w-full bg-bg border-t border-border">
@@ -200,13 +174,13 @@ export default function Credentials() {
           ref={carouselRef}
           className="flex overflow-x-auto no-scrollbar scroll-smooth gap-6 py-4 -my-4 snap-x snap-mandatory"
         >
-          {courses.map((course, idx) => (
+          {coursesToRender.map((course, idx) => (
             <div
               key={idx}
               className="min-w-[280px] sm:min-w-[320px] max-w-[320px] bg-surface border border-border rounded-xl p-6 snap-start hover:border-border-strong transition-colors duration-300"
             >
               <div className="w-10 h-10 rounded-lg bg-accent-soft flex items-center justify-center mb-6">
-                {course.icon}
+                {getCertIcon(course.badge_icon)}
               </div>
               <h4 className="font-display text-2xl font-extrabold text-text tracking-tight uppercase mb-2 leading-tight">
                 {course.title}

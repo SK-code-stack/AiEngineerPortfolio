@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef, MouseEvent } from "react";
 import Image from "next/image";
 
+import { ProfileData } from "@/data/api";
+
 // Custom client-side Counter component with IntersectionObserver
 function CountUp({
   end,
@@ -120,10 +122,22 @@ function TiltCard({ children }: { children: React.ReactNode }) {
 
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api/v1'}/profile/`)
+      .then(r => r.json())
+      .then(data => setProfile(data))
+      .catch(err => console.error("Error loading profile:", err));
   }, []);
+
+  const stats = [
+    { end: profile?.years_building ?? 2, suffix: "+", label: "Years Building" },
+    { end: profile?.live_projects_count ?? 5, suffix: "+", label: "Live Projects" },
+    { end: profile?.ml_frameworks_count ?? 3, suffix: "", label: "ML Frameworks" },
+    { end: profile?.tools_count ?? 10, suffix: "+", label: "Tools Mastered" },
+  ];
 
   return (
     <section className="relative w-full min-h-screen pt-32 pb-16 flex items-center overflow-hidden">
@@ -175,10 +189,7 @@ export default function Hero() {
             }`}
             style={{ transitionDelay: "450ms" }}
           >
-            I build intelligent full-stack systems that merge high-scale backend
-            engineering with applied machine learning. Based in Lahore, Pakistan,
-            I design and ship high-performance digital products from architecture to
-            production.
+            {profile?.bio_paragraph_1 || "I build intelligent full-stack systems that merge high-scale backend engineering with applied machine learning. Based in Lahore, Pakistan, I design and ship high-performance digital products from architecture to production."}
           </p>
 
           {/* Buttons */}
@@ -197,8 +208,10 @@ export default function Hero() {
               View Projects &rarr;
             </a>
             <a
-              href="#"
-              onClick={(e) => {
+              href={profile?.resume_file || "#"}
+              target={profile?.resume_file ? "_blank" : undefined}
+              rel={profile?.resume_file ? "noopener noreferrer" : undefined}
+              onClick={profile?.resume_file ? undefined : (e) => {
                 e.preventDefault();
                 alert("Résumé download feature triggered!");
               }}
@@ -217,12 +230,7 @@ export default function Hero() {
             }`}
             style={{ transitionDelay: "750ms" }}
           >
-            {[
-              { end: 2, suffix: "+", label: "Years Building" },
-              { end: 5, suffix: "+", label: "Live Projects" },
-              { end: 3, suffix: "", label: "ML Frameworks" },
-              { end: 10, suffix: "+", label: "Tools Mastered" },
-            ].map((stat, idx) => (
+            {stats.map((stat, idx) => (
               <div key={idx} className="flex flex-col">
                 <span className="font-display text-5xl font-black text-text mb-1 tracking-tight">
                   <CountUp end={stat.end} suffix={stat.suffix} />
@@ -255,14 +263,23 @@ export default function Hero() {
               >
                 {/* Portrait Image */}
                 <div className="relative w-[90%] h-[90%] flex items-end justify-center select-none pointer-events-none">
-                  <Image
-                    src="/portrait.png"
-                    alt="Muhammad Salman Khan Portrait"
-                    fill
-                    sizes="(max-width: 768px) 340px, 400px"
-                    priority
-                    className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
+                  {profile?.photo ? (
+                    <Image
+                      src={profile.photo}
+                      alt="Muhammad Salman Khan Portrait"
+                      fill
+                      sizes="(max-width: 768px) 340px, 400px"
+                      priority
+                      className="object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.03]"
+                      unoptimized={false}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-end justify-center">
+                      <div className="w-40 h-40 rounded-full bg-accent/20 border-2 border-accent/30 flex items-center justify-center mb-8">
+                        <span className="font-display text-4xl font-black text-accent/60">SK</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Floating Chips */}
@@ -273,7 +290,7 @@ export default function Hero() {
                   <div className="flex items-center space-x-2">
                     <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="font-mono text-xs font-semibold text-text uppercase">
-                      Full-Stack Dev
+                      {profile?.role_title?.split("&")[0]?.trim() || "Full-Stack Dev"}
                     </span>
                   </div>
                 </div>
@@ -285,7 +302,7 @@ export default function Hero() {
                   <div className="flex items-center space-x-2">
                     <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="font-mono text-xs font-semibold text-text uppercase">
-                      ML Engineer
+                      {profile?.role_title?.split("&")[1]?.trim() || "ML Engineer"}
                     </span>
                   </div>
                 </div>

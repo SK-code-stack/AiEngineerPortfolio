@@ -1,11 +1,16 @@
 "use client";
 
-import { MouseEvent, useRef } from "react";
+import { MouseEvent, useRef, useEffect, useState } from "react";
 import Link from "next/link";
-import { Project, projectsData } from "@/data/projects";
+import { Project } from "@/data/projects";
+import { ProjectData } from "@/data/api";
 
 // Helper to render responsive diagrams per project type
-export function ProjectDiagram({ type }: { type: Project["type"] }) {
+export function ProjectDiagram({ type, svgString }: { type: Project["type"]; svgString?: string }) {
+  if (svgString) {
+    return <div dangerouslySetInnerHTML={{ __html: svgString }} className="w-full h-full opacity-80" />;
+  }
+
   if (type === "dashboard") {
     return (
       <svg viewBox="0 0 240 140" fill="none" className="w-full h-full opacity-80" xmlns="http://www.w3.org/2000/svg">
@@ -67,7 +72,7 @@ export function ProjectDiagram({ type }: { type: Project["type"] }) {
 }
 
 // Single Project Card with cursor-glow
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({ project }: { project: ProjectData }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
@@ -82,6 +87,9 @@ export function ProjectCard({ project }: { project: Project }) {
     card.style.setProperty("--mx", `${x}px`);
     card.style.setProperty("--my", `${y}px`);
   };
+
+  const projectUrl = project.browser_url_label || project.slug || "";
+  const projectLink = project.source_url || project.live_url || "#";
 
   return (
     <div
@@ -105,7 +113,7 @@ export function ProjectCard({ project }: { project: Project }) {
           <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] opacity-75" />
         </div>
         <div className="w-[140px] sm:w-[220px] h-5 bg-surface-2 border border-border rounded-md flex items-center justify-center">
-          <span className="font-mono text-[9px] text-text-dim truncate px-2 select-none">{project.url}</span>
+          <span className="font-mono text-[9px] text-text-dim truncate px-2 select-none">{projectUrl}</span>
         </div>
         <div className="w-8" />
       </div>
@@ -113,7 +121,7 @@ export function ProjectCard({ project }: { project: Project }) {
       {/* Left Visual Panel */}
       <div className="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-border bg-surface-2 p-8 flex items-center justify-center min-h-[180px]">
         <div className="w-full max-w-[240px] h-[140px] flex items-center justify-center">
-          <ProjectDiagram type={project.type} />
+          <ProjectDiagram type={project.type || "dashboard"} svgString={project.diagram_svg} />
         </div>
       </div>
 
@@ -126,20 +134,25 @@ export function ProjectCard({ project }: { project: Project }) {
         </div>
         <div>
           <div className="flex flex-wrap gap-2 mb-6">
-            {project.stack.map((tech, idx) => (
+            {(project.tech_stack || []).map((tech: string, idx: number) => (
               <span key={idx} className="px-2.5 py-1 bg-surface-2 border border-border rounded-full font-mono text-[10px] sm:text-xs text-text-dim">
                 {tech}
               </span>
             ))}
           </div>
-          <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
-            className="font-mono text-xs sm:text-sm font-semibold text-text hover:text-accent flex items-center transition-colors duration-200"
-          >
-            <span>View source</span>
-            <span className="ml-1 transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
-          </a>
+          {projectLink !== "#" ? (
+            <a
+              href={projectLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs sm:text-sm font-semibold text-text hover:text-accent flex items-center transition-colors duration-200"
+            >
+              <span>{project.source_url ? "View source" : "View live"}</span>
+              <span className="ml-1 transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+            </a>
+          ) : (
+            <span className="font-mono text-xs text-text-dim">Internal project</span>
+          )}
         </div>
       </div>
     </div>
@@ -147,6 +160,15 @@ export function ProjectCard({ project }: { project: Project }) {
 }
 
 export default function Projects() {
+  const [projects, setProjects] = useState<ProjectData[]>([]);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api/v1'}/projects/?featured=true`)
+      .then(r => r.json())
+      .then(data => setProjects(data))
+      .catch(err => console.error("Error loading featured projects:", err));
+  }, []);
+
   return (
     <section id="work" className="py-24 w-full bg-surface-2 border-t border-border">
       <div className="max-w-[1280px] mx-auto px-6 w-full">
@@ -159,7 +181,7 @@ export default function Projects() {
           Engineered Work
         </h2>
         <div className="space-y-10 mb-16">
-          {projectsData.map((project) => (
+          {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>

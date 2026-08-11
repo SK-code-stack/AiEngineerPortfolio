@@ -12,6 +12,29 @@ const nextConfig = {
     imageSizes: [32, 64, 96, 128, 256, 400, 460],
     // Minimize re-optimization — cache for 60 seconds in dev, 1 day in prod
     minimumCacheTTL: 86400,
+    // Allow images from Supabase S3 storage and Django local server
+    remotePatterns: [
+      {
+        // Supabase S3 storage bucket — used for profile photo, avatar, and resume
+        protocol: "https",
+        hostname: "pyejhmvgelmrolhbuedv.supabase.co",
+        pathname: "/**",
+      },
+      {
+        // Django local dev server media files (fallback)
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "8000",
+        pathname: "/**",
+      },
+      {
+        // Django localhost alias
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/**",
+      },
+    ],
   },
 
   // Reduce unused JS by allowing more aggressive tree-shaking

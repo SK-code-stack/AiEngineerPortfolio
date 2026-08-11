@@ -1,17 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ProjectCard } from "@/components/Projects";
-import { projectsData } from "@/data/projects";
 import ChatWidget from "@/components/ChatWidget";
+
+import { ProjectData } from "@/data/api";
 
 export default function ProjectsPage() {
   const [filter, setFilter] = useState<"all" | "fullstack" | "ai">("all");
+  const [projects, setProjects] = useState<ProjectData[]>([]);
 
-  const filteredProjects = projectsData.filter((project) => {
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api/v1'}/projects/`)
+      .then(r => r.json())
+      .then(data => setProjects(data))
+      .catch(err => console.error("Error loading projects page:", err));
+  }, []);
+
+  const filteredProjects = projects.filter((project) => {
     if (filter === "all") return true;
     if (filter === "fullstack") {
       return project.category === "fullstack" || project.category === "fullstack+ai";

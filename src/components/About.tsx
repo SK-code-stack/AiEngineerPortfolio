@@ -1,6 +1,19 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { ProfileData } from "@/data/api";
 
 export default function About() {
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api/v1'}/profile/`)
+      .then(r => r.json())
+      .then(data => setProfile(data))
+      .catch(err => console.error("Error loading profile in About:", err));
+  }, []);
+
   const features = [
     {
       title: "Full-Stack Delivery",
@@ -64,7 +77,7 @@ export default function About() {
     },
   ];
 
-  const badges = ["Lahore, Pakistan", "Open to opportunities", "Remote-friendly"];
+  const badges = profile?.badges || ["Lahore, Pakistan", "Open to opportunities", "Remote-friendly"];
 
   return (
     <section id="about" className="py-24 w-full bg-surface-2 border-t border-border">
@@ -79,30 +92,36 @@ export default function About() {
         {/* Profile Row — matches reference exactly */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-16">
           {/* Avatar with spinning conic-gradient border (mask-composite technique) */}
-          <div className="avatar overflow-hidden">
-            <Image
-              src="/avatar.png"
-              alt="Muhammad Salman Khan Avatar"
-              fill
-              sizes="96px"
-              loading="lazy"
-              className="object-cover rounded-[20px]"
-            />
+          <div className="avatar overflow-hidden relative w-24 h-24">
+            {profile?.avatar ? (
+              <Image
+                src={profile.avatar}
+                alt="Muhammad Salman Khan Avatar"
+                fill
+                sizes="96px"
+                loading="lazy"
+                className="object-cover rounded-[20px]"
+              />
+            ) : (
+              <div className="w-full h-full rounded-[20px] bg-accent/20 border border-accent/30 flex items-center justify-center">
+                <span className="font-display text-2xl font-black text-accent/60">SK</span>
+              </div>
+            )}
           </div>
 
           <div>
             <p className="font-display text-2xl font-bold text-text tracking-tight mb-1">
-              Muhammad Salman Khan
+              {profile?.full_name || "Muhammad Salman Khan"}
             </p>
             <p className="font-mono text-xs font-semibold uppercase tracking-widest text-accent mt-1">
-              Full-Stack Developer &amp; ML Engineer
+              {profile?.role_title || "Full-Stack Developer & ML Engineer"}
             </p>
             <div className="flex items-center space-x-1.5 text-text-dim text-xs font-mono mt-1.5">
               <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z" />
                 <circle cx="12" cy="9" r="2.4" />
               </svg>
-              <span>Lahore, Pakistan</span>
+              <span>{profile?.location || "Lahore, Pakistan"}</span>
             </div>
           </div>
         </div>
@@ -133,15 +152,16 @@ export default function About() {
           <div className="lg:col-span-6 flex flex-col justify-center">
             <div className="space-y-5 mb-8">
               <p className="font-sans text-base text-text leading-relaxed">
-                Based in Lahore, Pakistan, I am currently pursuing a BS in Information
-                Technology. I focus on bridging the gap between high-level frontend interfaces and robust backend logic, combining them with production-ready AI systems.
+                {profile?.bio_paragraph_1 || "Based in Lahore, Pakistan, I am currently pursuing a BS in Information Technology. I focus on bridging the gap between high-level frontend interfaces and robust backend logic, combining them with production-ready AI systems."}
               </p>
               <p className="font-sans text-base text-text leading-relaxed">
-                My workflow is split across building clean React environments, structuring resilient API endpoints with Django and FastAPI, and fine-tuning applied Machine Learning modules (Retrieval-Augmented Generation, sentence embeddings, and model pipelines).
+                {profile?.bio_paragraph_2 || "My workflow is split across building clean React environments, structuring resilient API endpoints with Django and FastAPI, and fine-tuning applied Machine Learning modules (Retrieval-Augmented Generation, sentence embeddings, and model pipelines)."}
               </p>
-              <p className="font-sans text-base text-text leading-relaxed">
-                I believe in writing clean, modular code that ships fast, meets high performance standards, and remains easily maintainable. I enjoy turning complex system designs into simple, reliable software solutions.
-              </p>
+              {profile?.bio_paragraph_3 && (
+                <p className="font-sans text-base text-text leading-relaxed">
+                  {profile.bio_paragraph_3}
+                </p>
+              )}
             </div>
 
             {/* Badge Pills */}
