@@ -78,6 +78,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* Inline script runs before any paint — prevents flash of wrong theme */}
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('portfolio-theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body
         className={`${inter.variable} ${jetbrains.variable} ${bigShoulders.variable} antialiased`}
       >

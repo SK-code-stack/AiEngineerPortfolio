@@ -2,11 +2,22 @@
 
 import { useState, useEffect } from "react";
 
+const THEME_KEY = "portfolio-theme";
+
 export default function Navbar() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Read persisted theme on first mount
+  useEffect(() => {
+    const saved = localStorage.getItem(THEME_KEY) as "dark" | "light" | null;
+    const initial = saved ?? "dark";
+    setTheme(initial);
+    document.documentElement.setAttribute("data-theme", initial);
+  }, []);
+
+  // Keep <html data-theme> in sync whenever theme changes after mount
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
@@ -20,7 +31,11 @@ export default function Navbar() {
   }, []);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      localStorage.setItem(THEME_KEY, next);
+      return next;
+    });
   };
 
   const navLinks = [
