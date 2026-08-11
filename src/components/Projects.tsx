@@ -1,12 +1,29 @@
 "use client";
 
 import { MouseEvent, useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Project } from "@/data/projects";
 import { ProjectData } from "@/data/api";
 
 // Helper to render responsive diagrams per project type
-export function ProjectDiagram({ type, svgString }: { type: Project["type"]; svgString?: string }) {
+export function ProjectDiagram({ type, svgString, imageUrl }: { type: Project["type"]; svgString?: string; imageUrl?: string | null }) {
+  // Real image takes priority
+  if (imageUrl) {
+    return (
+      <div className="w-full h-full relative rounded-lg overflow-hidden">
+        <Image
+          src={imageUrl}
+          alt="Project preview"
+          fill
+          sizes="(max-width: 1024px) 100vw, 400px"
+          className="object-cover"
+          unoptimized
+        />
+      </div>
+    );
+  }
+
   if (svgString) {
     return <div dangerouslySetInnerHTML={{ __html: svgString }} className="w-full h-full opacity-80" />;
   }
@@ -120,8 +137,12 @@ export function ProjectCard({ project }: { project: ProjectData }) {
 
       {/* Left Visual Panel */}
       <div className="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-border bg-surface-2 p-8 flex items-center justify-center min-h-[180px]">
-        <div className="w-full max-w-[240px] h-[140px] flex items-center justify-center">
-          <ProjectDiagram type={project.type || "dashboard"} svgString={project.diagram_svg} />
+        <div className={`relative flex items-center justify-center ${project.image ? "w-full h-[180px]" : "w-full max-w-[240px] h-[140px]"}`}>
+          <ProjectDiagram
+            type={project.type || "dashboard"}
+            svgString={project.diagram_svg}
+            imageUrl={project.image}
+          />
         </div>
       </div>
 

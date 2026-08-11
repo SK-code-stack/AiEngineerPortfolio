@@ -150,16 +150,6 @@ body {
 }
 
 /* Respect prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-delay: 0s !important;
-    animation-duration: 0s !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0s !important;
-    scroll-behavior: auto !important;
-    transform: none !important;
-  }
-}
 
 /* Custom Rotating Conic Avatar Border matching reference */
 .avatar {
@@ -244,4 +234,22 @@ body {
   display: flex;
   width: max-content;
   animation: marquee-scroll-animation 55s linear infinite !important;
+}
+
+
+/* chatting dot animation */
+
+@keyframes chatbot-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.chat-dot {
+  display: inline-block;
+  animation: chatbot-bounce 0.7s ease-in-out infinite;
 }

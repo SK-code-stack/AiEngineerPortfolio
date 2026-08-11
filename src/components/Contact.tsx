@@ -51,6 +51,33 @@ export default function Contact() {
       const data = await response.json();
 
       if (response.ok && data.success) {
+        // Send email via EmailJS alongside the backend submission
+        try {
+          const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "aiportfolio";
+          const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "template_ac0e7nf";
+          const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "DdZc8Cy8xWxxI5XV8";
+
+          await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              service_id: serviceId,
+              template_id: templateId,
+              user_id: publicKey,
+              template_params: {
+                name: formData.name,
+                time: new Date().toLocaleString(),
+                message: formData.message,
+                email: formData.email,
+              },
+            }),
+          });
+        } catch (emailJsErr) {
+          console.error("EmailJS sending failed:", emailJsErr);
+        }
+
         setStatus("success");
         setFormData({ name: "", email: "", message: "" });
       } else {

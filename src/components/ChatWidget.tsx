@@ -23,6 +23,8 @@ const INITIAL_MESSAGES: Message[] = [
   },
 ];
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
+
 function getBotReply(input: string): string {
   const lower = input.toLowerCase();
 
@@ -56,6 +58,7 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [input, setInput] = useState("");
   const [nextId, setNextId] = useState(1);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Drag state
   const [pos, setPos] = useState({ x: 24, y: 24 }); // bottom-right offset
@@ -73,7 +76,7 @@ export default function ChatWidget() {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isOpen]);
+  }, [messages, isOpen, isGenerating]);
 
   // Focus input when chat opens
   useEffect(() => {
@@ -176,20 +179,46 @@ export default function ChatWidget() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, pos]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const text = input.trim();
-    if (!text) return;
+    if (!text || isGenerating) return;
 
     const userMsg: Message = { id: nextId, sender: "user", text };
-    const botMsg: Message = {
-      id: nextId + 1,
-      sender: "bot",
-      text: getBotReply(text),
-    };
-
-    setMessages((prev) => [...prev, userMsg, botMsg]);
-    setNextId((n) => n + 2);
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setIsGenerating(true);
+
+    try {
+      const response = await fetch(`${API_BASE}/chat/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: text }),
+      });
+
+      if (!response.ok) {
+        throw new Error("API call failed");
+      }
+
+      const data = await response.json();
+      const replyText = data.response || getBotReply(text);
+
+      setMessages((prev) => [
+        ...prev,
+        { id: nextId + 1, sender: "bot", text: replyText },
+      ]);
+    } catch (err) {
+      // Graceful fallback to offline local logic
+      const fallbackReply = getBotReply(text);
+      setMessages((prev) => [
+        ...prev,
+        { id: nextId + 1, sender: "bot", text: fallbackReply },
+      ]);
+    } finally {
+      setIsGenerating(false);
+      setNextId((n) => n + 2);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -266,6 +295,15 @@ export default function ChatWidget() {
                 </div>
               </div>
             ))}
+            {isGenerating && (
+              <div className="flex justify-start">
+                <div className="bg-surface-2 border border-border text-text rounded-2xl rounded-bl-sm px-3.5 py-2.5 max-w-[80%] flex items-center space-x-1">
+                  <span className="chat-dot w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <span className="chat-dot w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <span className="chat-dot w-1.5 h-1.5 bg-accent rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -277,12 +315,13 @@ export default function ChatWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask me anything..."
-              className="flex-1 bg-surface-2 border border-border rounded-full px-4 py-2 text-xs sm:text-sm text-text placeholder:text-text-dim focus:outline-none focus:border-accent transition-colors"
+              placeholder={isGenerating ? "SK Assistant is typing..." : "Ask me anything..."}
+              disabled={isGenerating}
+              className="flex-1 bg-surface-2 border border-border rounded-full px-4 py-2 text-xs sm:text-sm text-text placeholder:text-text-dim focus:outline-none focus:border-accent transition-colors disabled:opacity-60"
             />
             <button
               onClick={sendMessage}
-              disabled={!input.trim()}
+              disabled={!input.trim() || isGenerating}
               className="w-8 h-8 rounded-full bg-accent hover:bg-accent/90 disabled:opacity-40 flex items-center justify-center transition-all shrink-0"
               aria-label="Send message"
             >
