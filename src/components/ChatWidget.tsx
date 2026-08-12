@@ -208,7 +208,7 @@ export default function ChatWidget() {
         ...prev,
         { id: nextId + 1, sender: "bot", text: replyText },
       ]);
-    } catch (err) {
+    } catch {
       // Graceful fallback to offline local logic
       const fallbackReply = getBotReply(text);
       setMessages((prev) => [
@@ -359,7 +359,7 @@ export default function ChatWidget() {
         <div className="absolute inset-0 rounded-full bg-accent/20 animate-heartbeat-glow pointer-events-none" />
 
         {/* FAB Circle */}
-        <div className="absolute inset-1 rounded-full bg-surface border border-border-strong shadow-2xl overflow-hidden flex items-center justify-center hover:border-accent transition-colors duration-300">
+        <div className="absolute inset-1 rounded-full bg-surface border border-border-strong shadow-2xl flex items-center justify-center hover:border-accent transition-colors duration-300">
           <div
             className="relative w-full h-full animate-float-mascot pointer-events-none"
             style={{ padding: "6px" }}
