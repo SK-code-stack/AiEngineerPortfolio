@@ -46,7 +46,7 @@ export default function Skills() {
   };
 
   const defaultCategories = [
-    { category: "Frontend", skills: ["React.js", "HTML/CSS/JS", "Tailwind/Bootstrap", "jQuery"] },
+    { category: "Frontend", skills: ["React/Next.js", "HTML/CSS/JS", "Tailwind/Bootstrap", "jQuery"] },
     { category: "Backend", skills: ["Django/DRF", "Laravel/PHP", "Node.js/Express", "PostgreSQL/MySQL/Mongo"] },
     { category: "AI/ML", skills: ["scikit-learn/Pandas", "PyTorch/Transformers", "OpenAI Agent SDK", "ChromaDB"] },
     { category: "Tooling", skills: ["Git/GitHub", "Firebase", "Kotlin/Android", "WordPress/Design"] }

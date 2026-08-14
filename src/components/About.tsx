@@ -36,9 +36,9 @@ export default function About() {
       ),
     },
     {
-      title: "ML That Ships",
+      title: "AI That Ships",
       description:
-        "Bringing model prediction, vector embeddings, and RAG systems out of Jupyter and into production apps.",
+        "Bringing model predictions, vector embeddings, and RAG systems from prototype to fully deployed, production-ready applications.",
       icon: (
         <svg
           className="w-6 h-6 text-accent"
@@ -58,7 +58,7 @@ export default function About() {
     {
       title: "Fast, Clean Execution",
       description:
-        "Delivering modular, well-tested code quickly, with semantic HTML, accessibility, and high performance.",
+        "Shipping modular, well-tested code fast - clean APIs, scalable ML pipelines, and performance-first architecture, end to end.",
       icon: (
         <svg
           className="w-6 h-6 text-accent"
@@ -114,7 +114,7 @@ export default function About() {
               {profile?.full_name || "Muhammad Salman Khan"}
             </p>
             <p className="font-mono text-xs font-semibold uppercase tracking-widest text-accent mt-1">
-              {profile?.role_title || "Full-Stack Developer & ML Engineer"}
+              {profile?.role_title || "Full-Stack Developer & AL Engineer"}
             </p>
             <div className="flex items-center space-x-1.5 text-text-dim text-xs font-mono mt-1.5">
               <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -152,14 +152,14 @@ export default function About() {
           <div className="lg:col-span-6 flex flex-col justify-center">
             <div className="space-y-5 mb-8">
               <p className="font-sans text-base text-text leading-relaxed">
-                {profile?.bio_paragraph_1 || "Based in Lahore, Pakistan, I am currently pursuing a BS in Information Technology. I focus on bridging the gap between high-level frontend interfaces and robust backend logic, combining them with production-ready AI systems."}
+                {profile?.bio_paragraph_1 || "Based in Lahore, Pakistan, I'm an AI Engineer turning complex machine learning problems into production-grade systems. I build LLM-powered applications and intelligent pipelines, backed by strong full-stack development skills that bring every idea to life."}
               </p>
               <p className="font-sans text-base text-text leading-relaxed">
-                {profile?.bio_paragraph_2 || "My workflow is split across building clean React environments, structuring resilient API endpoints with Django and FastAPI, and fine-tuning applied Machine Learning modules (Retrieval-Augmented Generation, sentence embeddings, and model pipelines)."}
+                {profile?.bio_paragraph_2 || "My workflow centers on fine-tuning applied Machine Learning models, engineering Retrieval-Augmented Generation pipelines, and integrating vector databases and generative AI APIs, complemented by building resilient backend systems with Django and FastAPI."}
               </p>
               {profile?.bio_paragraph_3 && (
                 <p className="font-sans text-base text-text leading-relaxed">
-                  {profile.bio_paragraph_3}
+                  {profile.bio_paragraph_3 || "I believe in writing clean, modular code that ships fast, meets high performance standards, and remains easily maintainable. I enjoy turning complex system designs into simple, reliable software solutions."}
                 </p>
               )}
             </div>

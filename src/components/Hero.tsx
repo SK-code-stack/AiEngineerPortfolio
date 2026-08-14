@@ -189,7 +189,7 @@ export default function Hero() {
             }`}
             style={{ transitionDelay: "450ms" }}
           >
-            {profile?.bio_paragraph_1 || "I build intelligent full-stack systems that merge high-scale backend engineering with applied machine learning. Based in Lahore, Pakistan, I design and ship high-performance digital products from architecture to production."}
+            {profile?.bio_paragraph_1 || "Based in Lahore, Pakistan, I'm an AI Engineer turning complex machine learning problems into production-grade systems. I build LLM-powered applications and intelligent pipelines, backed by strong full-stack development skills that bring every idea to life."}
           </p>
 
           {/* Buttons */}
@@ -290,7 +290,7 @@ export default function Hero() {
                   <div className="flex items-center space-x-2">
                     <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="font-mono text-xs font-semibold text-text uppercase">
-                      {profile?.role_title?.split("&")[0]?.trim() || "Full-Stack Dev"}
+                      {profile?.role_title?.split("&")[0]?.trim() || "AI ENGINEER"}
                     </span>
                   </div>
                 </div>
@@ -302,7 +302,7 @@ export default function Hero() {
                   <div className="flex items-center space-x-2">
                     <span className="w-2 h-2 rounded-full bg-accent" />
                     <span className="font-mono text-xs font-semibold text-text uppercase">
-                      {profile?.role_title?.split("&")[1]?.trim() || "ML Engineer"}
+                      {profile?.role_title?.split("&")[1]?.trim() || "FULL-STACK DEV"}
                     </span>
                   </div>
                 </div>

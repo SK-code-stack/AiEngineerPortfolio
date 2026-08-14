@@ -57,8 +57,8 @@ export default function Credentials() {
   const defaultCourses = [
     { title: "Full Stack Web Development", subtitle: "Certificate Course • Web Engineering & APIs", badge_icon: "code" },
     { title: "Python Programming", subtitle: "Applied, Project-Based • Core & Automation", badge_icon: "python" },
-    { title: "Graphic Designing", subtitle: "Visual Systems, UI Layouts & Typography", badge_icon: "design" },
-    { title: "Machine Learning Fundamentals", subtitle: "scikit-learn, Regression & Applied Stats", badge_icon: "ml" }
+    { title: "Machine Learning Fundamentals", subtitle: "scikit-learn, Regression & Applied Stats", badge_icon: "ml" },
+    { title: "Generative AI Engineering", subtitle: "Applied Machine Learning, Project-Based • Automation", badge_icon: "IBM" }
   ];
 
   const coursesToRender = certs.length ? certs : defaultCourses;
@@ -98,7 +98,7 @@ export default function Credentials() {
                 BS Information Technology
               </h4>
               <p className="font-mono text-xs text-accent uppercase font-semibold">
-                In Progress
+                Completed
               </p>
               <p className="font-sans text-sm text-text-dim leading-relaxed">
                 Focusing on core computing systems, network infrastructures, software architecture,
