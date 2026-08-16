@@ -17,7 +17,7 @@ export function ProjectDiagram({ type, svgString, imageUrl }: { type: Project["t
           alt="Project preview"
           fill
           sizes="(max-width: 1024px) 100vw, 400px"
-          className="object-cover"
+          className="object-contain"
           unoptimized
         />
       </div>
