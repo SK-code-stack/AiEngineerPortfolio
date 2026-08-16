@@ -48,6 +48,17 @@ const nextConfig = {
 
   // Disable X-Powered-By header (minor security + response size)
   poweredByHeader: false,
+
+  // Redirect /sk to the backend URL
+  async redirects() {
+    return [
+      {
+        source: "/sk",
+        destination: process.env.BACKEND_URL || "https://ai-eng-portfolio-backend-sand.vercel.app/admin/",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
